@@ -1,6 +1,6 @@
-### Used dataset
+### Dataset
 
-MNIST handwritten digits databse in csv file
+We are using MNIST handwritten digits databse in csv file
 
 ### Download link
 https://pjreddie.com/projects/mnist-in-csv/
