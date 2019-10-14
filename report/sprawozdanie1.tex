@@ -1,10 +1,61 @@
-\documentclass{article}
-\begin{document}
-\begin{center}
-    Programowanie równoległe i rozproszone
-    
-\vspace{20pt} 
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\selectlanguage{polish}
+\title{
+	\textbf{Programowanie równoległe i rozproszone}\vspace{40pt}
+	\textit{Politechnika Krakowska} \\\vspace{40pt}
+	Laboratorium 1
+	\vspace{300pt}
 
-    Laboratorium 1
+}
+\author{
+	Paweł Suchanicz,\\
+	Rafał Niemczyk
+}
+\begin{document}
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+\begin{center}
+\tableofcontents
 \end{center}
+\newpage
+\section{Wstęp}
+\subsection{Opis laboratorium}
+\paragraph{}Celem laboratorium było wykorzystanie interfejsu OpenMP w celu zrównoleglenia kodu C++. Interfejs OpenMP składa się głównie z dyrektyw preprocesora a także z zmiennych środowiskowych i funkcji bibliotecznych. W laboratorium wykorzystywany będzie głównie do zrównoleglania pętli.
+\paragraph{}Algorytmy, które są implementowane a następnie zrównoleglane w ramach laboratorium to normalizacja min-max, standaryzacja rozkładem normalnym i klasyfikacja KNN (k-najbliższych sąsiadów). Zaimplementowany KNN  uwzględnia jednego sąsiada i używa metryki euklidesowej.
+\paragraph{}Szybkość działania każdego algorytmu została zmierzona dla implementacji w C++, implementacji w C++ po zrównolegleniu dla różnej ilości wątków (1-4) oraz impelmentacji w Python (ze skorzystaniem z funkcji z pakietu scikit-learn).
+\subsection{Specyfikacja sprzętowa}
+\paragraph{}Przy pomiarach szybkości wykonywania algorytmów wykorzystany był sprzęt w konfiguracji:
+\begin{itemize}
+\item Procesor: Intel Core i7-4712MQ 4 x 2.30GHz
+\item Ram: 8GB DDR3
+\item System: Linux (Fedora 22)
+\end{itemize}
+\subsection{Zbiór danych} 
+\paragraph{}Wykorzytany został zbiór obrazów ręcznie pisanych cyfr MNIST. Wykorzytany zbiór ma format .csv i zawiera 60000 rekordów, gdzie każdy rekord odpowiada za jeden obrazek 28x28 pikseli w skali szarości. Pierwsza wartość w rekordzie jest cyfrą która widnieje na obrazku, a kolejne to wartości pikseli obrazka. 
+\paragraph{}
+Dla zadań postawionych w laboratorium zbiór danych jest dość duży, więc został on obcięty do pierwszych 6000 rekordów, z czego 4500 przeznaczono do trenowania, a pozostałe 1500 do testowania.
+\newpage    
+\section{Wyniki}   
+\subsection{Normalizacja i standaryzacja} 
+\paragraph{}Normalizacja:
+\paragraph{}$x^*=\frac{x-min(x)}{max(x)-min(x)}$
+\paragraph{} Standaryzacja:
+\paragraph{}$x^*=\frac{x-\mu}{\sigma}$
+\subsubsection{Implementacja w C++} 
+\subsubsection{Implementacja w Python} 
+\subsubsection{Porównanie wyników} 
+\newpage
+\subsection{Klasyfikacja KNN} 
+\subsubsection{Implementacja w C++} 
+\subsubsection{Implementacja w Python} 
+\subsubsection{Porównanie wyników} 
+\newpage
+\section{Podsumowanie} 
+ 
 \end{document}
