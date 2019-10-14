@@ -20,7 +20,7 @@ def setup_logging(
             config = json.load(f)
         logging.config.dictConfig(config)
     else:
-        logging.basicConfig(level=logging.DEBUG, filename='app.log', filemode='a',
+        logging.basicConfig(level=logging.DEBUG, filename='logs/app.log', filemode='a',
                             format='%(asctime)s | %(process)d | %(levelname)s | %(module)s %(funcName)s | %(message)s')
 
 
