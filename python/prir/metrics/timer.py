@@ -23,4 +23,4 @@ def inner(_it, _timer{init}):
     return _t1 - _t0, ret_val
 """
 
-logger = app_logging.get_logger(__name__)
+logger = app_logging.get_logger('metrics')
