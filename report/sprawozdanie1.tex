@@ -3,10 +3,14 @@
 \usepackage[polish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
+\usepackage{pgfplots}
 \selectlanguage{polish}
+\usepackage{geometry}
+\usepackage{listings}
+\newgeometry{tmargin=3cm, bmargin=3cm, lmargin=2.5cm, rmargin=2.5cm}
 \title{
 	\textbf{Programowanie równoległe i rozproszone}\vspace{40pt}
-	\textit{Politechnika Krakowska} \\\vspace{40pt}
+	\\\textit{Politechnika Krakowska} \\\vspace{40pt}
 	Laboratorium 1
 	\vspace{300pt}
 
@@ -30,10 +34,10 @@
 \paragraph{}Algorytmy, które są implementowane a następnie zrównoleglane w ramach laboratorium to normalizacja min-max, standaryzacja rozkładem normalnym i klasyfikacja KNN (k-najbliższych sąsiadów). Zaimplementowany KNN  uwzględnia jednego sąsiada i używa metryki euklidesowej.
 \paragraph{}Szybkość działania każdego algorytmu została zmierzona dla implementacji w C++, implementacji w C++ po zrównolegleniu dla różnej ilości wątków (1-4) oraz impelmentacji w Python (ze skorzystaniem z funkcji z pakietu scikit-learn).
 \subsection{Specyfikacja sprzętowa}
-\paragraph{}Przy pomiarach szybkości wykonywania algorytmów wykorzystany był sprzęt w konfiguracji:
+\paragraph{}Przy pomiarach szybkości wykonywania algorytmów wykorzystany był sprzęt w konfiguracji (maszyna wirtualna):
 \begin{itemize}
 \item Procesor: Intel Core i7-4712MQ 4 x 2.30GHz
-\item Ram: 8GB DDR3
+\item Ram: 2GB DDR3
 \item System: Linux (Fedora 22)
 \end{itemize}
 \subsection{Zbiór danych} 
@@ -42,20 +46,263 @@
 Dla zadań postawionych w laboratorium zbiór danych jest dość duży, więc został on obcięty do pierwszych 6000 rekordów, z czego 4500 przeznaczono do trenowania, a pozostałe 1500 do testowania.
 \newpage    
 \section{Wyniki}   
-\subsection{Normalizacja i standaryzacja} 
-\paragraph{}Normalizacja:
+\subsection{Normalizacja min-max} 
+\paragraph{}Wzór:
 \paragraph{}$x^*=\frac{x-min(x)}{max(x)-min(x)}$
-\paragraph{} Standaryzacja:
-\paragraph{}$x^*=\frac{x-\mu}{\sigma}$
-\subsubsection{Implementacja w C++} 
-\subsubsection{Implementacja w Python} 
+\subsubsection{Implementacja} 
+\paragraph{}W C++ normalizacja została samodzielnie zgodnie z podanym powyżej wzorem. W pętli przechodzącej tablicy (po kolumnach) wyszukiwane są wartości minimum i maxium dla każdej kolumny a następnie wyliczana nowa wartość dla każdego z elementów tablicy. Zrównoleglenie pętli za pomocą dyrektyw:
+\begin{lstlisting}
+	# pragma omp parallel default(none) private(i, j, min, max)
+	 shared(data, rows, columns, nr_threads) num_threads(nr_threads)
+	# pragma omp for schedule(dynamic, nr_threads)\end{lstlisting}
+\paragraph{}W Pythonie użyta została funkcja MinMaxScaler z pakietu sklearn .
 \subsubsection{Porównanie wyników} 
+\paragraph{}
+\begin{tabular}{|c|c|}
+\hline Parametry&Czas [s] \\ 
+\hline C++ & 0.281 \\
+\hline C++ OpenMP 1 wątek& 0.275 \\
+\hline C++ OpenMP 2 wątki& 0.131 \\
+\hline C++ OpenMP 3 wątki& 0.102 \\
+\hline C++ OpenMP 4 wątki& 0.077 \\\hline
+\hline Pyhon sklearn& 0.037 \\
+\hline
+\end{tabular}
+\paragraph{}
+Po zastosowaniu OpenMP i zwiększeniu ilości używanych wątków widać znaczącą poprawę czasu wykonania. Czas zmniejsza się proporcjonalnie wraz ze zwiększanie liczby wątków.\\
+\begin{tikzpicture}[scale=1.5]
+\begin{axis}[
+title={Zależność czasu od ilości wątków - normalizacja},
+title style={text width=16em},
+xlabel={Ilość wątków},
+ylabel={Czas [s]},
+xmin=0,xmax=5,
+ymin=0.04,ymax=0.3,
+legend pos=north east,
+ymajorgrids=true,grid style=dashed
+]
+
+\addplot[color=red,mark=*]
+coordinates {
+(1,0.275)
+(2,0.231)
+(3,0.102)
+(4,0.077)
+};
+
+\legend{C++}
+\end{axis}
+\end{tikzpicture}
+\paragraph{}
+\begin{tikzpicture}[scale=1.5]
+\begin{axis}[
+title={Zależność przyspieszenia od ilości wątków - normalizacja},
+title style={text width=16em},
+xlabel={Ilość wątków},
+ylabel={Czas [s]},
+xmin=0,xmax=5,
+ymin=0,ymax=0.3,
+legend pos=north east,
+ymajorgrids=true,grid style=dashed
+]
+
+\addplot[color=red,mark=*]
+coordinates {
+(1,0.006)
+(2,0.15)
+(3,0.179)
+(4,0.204)
+
+};
+
+\legend{C++}
+\end{axis}
+\end{tikzpicture}
+\newpage
+
+\subsection{Standaryzacja rozkładem normalnym} 
+\paragraph{} Wzór:
+\paragraph{}$x^*=\frac{x-\mu}{\sigma}$
+\subsubsection{Implementacja} 
+\paragraph{}W C++ standaryzacja została samodzielnie zgodnie z podanym powyżej wzorem. Przechodzimy w pętli po kolumnach i dla każdej kolumny szukamy wartości średniej i wariancji, a następnie wyliczamy nowe wartości dla każdego elementu tablicy. Zrównoleglenie pętli za pomocą dyrektyw:
+\begin{lstlisting}
+	#pragma omp parallel default(none) private(i, j, amo, var, ave)
+	shared(data, rows, columns, nr_threads) num_threads(nr_threads)
+	#pragma omp for schedule(dynamic, nr_threads)
+\end{lstlisting}
+
+\paragraph{}W Pythonie użyta została funkcja StandardScaler z pakietu sklearn.
+
+\subsubsection{Porównanie wyników} 
+
+\paragraph{}
+\begin{tabular}{|c|c|}
+\hline Parametry&Czas [s] \\
+\hline C++ & 0,774s \\
+\hline C++ OpenMP 1 wątek& 0.813 \\
+\hline C++ OpenMP 2 wątki& 0.408 \\
+\hline C++ OpenMP 3 wątki& 0.286 \\
+\hline C++ OpenMP 4 wątki& 0.225 \\\hline
+\hline Pyhon sklearn& 0.086 \\
+\hline
+\end{tabular}
+\paragraph{}
+Zrównoleglenie w C++ przyniosło pozytywne sutki. Czas wykonania spadł dwukrotnie przy użyciu dwóch wątków i prawie czterokrotnie przy użyciu czterech.
+
+\begin{tikzpicture}[scale=1.5]
+\begin{axis}[
+title={Zależność czasu od ilości wątków - standaryzacja},
+title style={text width=16em},
+xlabel={Ilość wątków},
+ylabel={Czas [s]},
+xmin=0,xmax=5,
+ymin=0.1,ymax=0.84,
+legend pos=north east,
+ymajorgrids=true,grid style=dashed
+]
+
+\addplot[color=red,mark=*]
+coordinates {
+(1,0.813)
+(2,0.408)
+(3,0.286)
+(4,0.225)
+};
+
+\legend{C++}
+\end{axis}
+\end{tikzpicture}
+\paragraph{}
+\begin{tikzpicture}[scale=1.5]
+\begin{axis}[
+title={Zależność przyspieszenia od ilości wątków - standaryzacja},
+title style={text width=16em},
+xlabel={Ilość wątków},
+ylabel={Czas [s]},
+xmin=0,xmax=5,
+ymin=-0.1,ymax=0.75,
+legend pos=north east,
+ymajorgrids=true,grid style=dashed
+]
+
+\addplot[color=red,mark=*]
+coordinates {
+(1,-0.039)
+(2,0.366)
+(3,0.488)
+(4,0.549)
+};
+
+\legend{C++}
+\end{axis}
+\end{tikzpicture}
 \newpage
 \subsection{Klasyfikacja KNN} 
-\subsubsection{Implementacja w C++} 
-\subsubsection{Implementacja w Python} 
+\subsubsection{Implementacja} 
+\paragraph{}W C++ algorytm k najbliższych sąsiadów zaimplementowany samodzielnie. Algorytm uwzględnia tylko najbliższego sąsiada i korzysta z metryki euklidesowej.  Zrównoleglenie za pomocą dyrektyw:
+\begin{lstlisting}
+	#pragma omp parallel default(none) private(i, j, metric, amount, searchRow) 
+	shared(trainData, dataTrainRows, columns, nr_threads) num_threads(nr_threads)
+	#pragma omp for schedule(dynamic, nr_threads)
+\end{lstlisting}
+
+\paragraph{}W Pythonie użyta została funkcja KNeighborsClassifier z pakietu sklearn z parametrami:
+\begin{lstlisting}
+KNeighborsClassifier(n_neighbors=1, algorithm='brute', p=2, metric='minkowski',
+n_jobs=app_conf['jobs_number'])
+\end{lstlisting}
+Czasy były mierzone dla wartości njobs od 1 do 4. \\
+Dokładność accuracy wyniosła 71\% dla danych po standard scalerze oraz 66\% dla danych po min-max scalarze. Dla c++ w przypadku normalizacji min-max otrzymano dokładność. 
+W przypadku normalizacji w c++ otrzymano dokładność 75\%. Inaczej okazało się w przypadku standaryzacji, gdzie otrzymywano bardzo niskie wartości dokładności. Prawdopodobnie spowodowane błędem w implementacji algorytmu.
 \subsubsection{Porównanie wyników} 
-\newpage
-\section{Podsumowanie} 
+\paragraph{}
+\begin{tabular}{|c|c|}
+\hline Parametry&Czas [s] \\ 
+\hline C++ OpenMP 1 wątek min-max& 374 \\
+\hline C++ OpenMP 2 wątki min-max& 368 \\
+\hline C++ OpenMP 3 wątki min-max& 368  \\
+\hline C++ OpenMP 4 wątki min-max& 370 \\\hline
+\hline Pyhon sklearn 1 wątek min-max& 0.215 \\
+\hline Pyhon sklearn 2 wątki min-max& 0.323 \\
+\hline Pyhon sklearn 3 wątki min-max& 0.455 \\
+\hline Pyhon sklearn 4 wątki min-max& 0.386 \\\hline
+\hline C++ OpenMP 1 wątek standard-scaler& 382 \\
+\hline C++ OpenMP 2 wątki standard-scaler& 380 \\ 
+\hline C++ OpenMP 3 wątki standard-scaler&   384 \\ 
+\hline C++ OpenMP 4 wątki standard-scaler& 386 \\\hline
+\hline Pyhon sklearn 1 wątek standard-scaler& 0.208 \\
+\hline Pyhon sklearn 2 wątki standard-scaler& 0.326 \\
+\hline Pyhon sklearn 3 wątki standard-scaler& 0.329 \\
+\hline Pyhon sklearn 4 wątki standard-scaler& 0.328 \\\hline
+\end{tabular}
+\paragraph{}
+Zrównoleglenie nie dało żadnych pozytywnych skutków. W przypadku c++ czas wykonania był bardzo duży i nie zmieniał i pozostawał stały przy próbach zrównoleglania i zwiększania ilości wątków. W przypadku Python zwiększanie parametru njobs algorytmu KNN przynosiło odwrotny skutek do oczekiwanego - czas wykonania wydłużał się.
+\paragraph{}
+\begin{tikzpicture}[scale=1.5]
+\begin{axis}[
+title={Zależność czasu od ilości wątków - knn},
+title style={text width=16em},
+xlabel={Ilość wątków},
+ylabel={Czas [s]},
+xmin=0,xmax=5,
+ymin=350,ymax=400,
+legend pos=north east,
+ymajorgrids=true,grid style=dashed
+]
+
+\addplot[color=red,mark=*]
+coordinates {
+(1,374)
+(2,368)
+(3,368)
+(4,370)
+};
+
+\addplot[color=green,mark=o]
+coordinates {
+(1,382)
+(2,380)
+(3,384)
+(4,386)
+};
+
+\legend{C++ min-max, C++ standard scaler}
+\end{axis}
+\end{tikzpicture}
+
+\paragraph{}
+\begin{tikzpicture}[scale=1.5]
+\begin{axis}[
+title={Zależność czasu od ilości wątków - knn},
+title style={text width=16em},
+xlabel={Ilość wątków},
+ylabel={Czas [s]},
+xmin=0,xmax=5,
+ymin=0.15,ymax=0.56,
+legend pos=north east,
+ymajorgrids=true,grid style=dashed
+]
+
+\addplot[color=blue,mark=square]
+coordinates {
+(1,0.215)
+(2,0.323)
+(3,0.455)
+(4,0.386)
+
+};
+
+\addplot[color=orange,mark=square*]
+coordinates {
+(1,0.208)
+(2,0.326)
+(3,0.329)
+(4,0.328)
+
+};
+
+\legend{Python min-max, Python standard scaler}
+\end{axis}
+\end{tikzpicture}
  
 \end{document}
