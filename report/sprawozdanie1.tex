@@ -30,18 +30,18 @@
 \newpage
 \section{Wstęp}
 \subsection{Opis laboratorium}
-\paragraph{}Celem laboratorium było wykorzystanie interfejsu OpenMP w celu zrównoleglenia kodu C++. Interfejs OpenMP składa się głównie z dyrektyw preprocesora a także z zmiennych środowiskowych i funkcji bibliotecznych. W laboratorium wykorzystywany będzie głównie do zrównoleglania pętli.
+\paragraph{}Celem laboratorium było wykorzystanie interfejsu OpenMP do zrównoleglenia kodu C++. Interfejs OpenMP składa się głównie z dyrektyw preprocesora a także z zmiennych środowiskowych i funkcji bibliotecznych. W laboratorium wykorzystywany będzie głównie do zrównoleglania pętli.
 \paragraph{}Algorytmy, które są implementowane a następnie zrównoleglane w ramach laboratorium to normalizacja min-max, standaryzacja rozkładem normalnym i klasyfikacja KNN (k-najbliższych sąsiadów). Zaimplementowany KNN  uwzględnia jednego sąsiada i używa metryki euklidesowej.
-\paragraph{}Szybkość działania każdego algorytmu została zmierzona dla implementacji w C++, implementacji w C++ po zrównolegleniu dla różnej ilości wątków (1-4) oraz impelmentacji w Python (ze skorzystaniem z funkcji z pakietu scikit-learn).
+\paragraph{}Szybkość działania każdego algorytmu została zmierzona dla implementacji w C++, implementacji w C++ po zrównolegleniu dla różnej ilości wątków (1-8) oraz impelmentacji w Python (ze skorzystaniem z funkcji z pakietu scikit-learn).
 \subsection{Specyfikacja sprzętowa}
 \paragraph{}Przy pomiarach szybkości wykonywania algorytmów wykorzystany był sprzęt w konfiguracji (maszyna wirtualna):
 \begin{itemize}
 \item Procesor: Intel Core i7-4712MQ 4 x 2.30GHz
-\item Ram: 2GB DDR3
+\item Ram: 4GB DDR3
 \item System: Linux (Fedora 22)
 \end{itemize}
 \subsection{Zbiór danych} 
-\paragraph{}Wykorzytany został zbiór obrazów ręcznie pisanych cyfr MNIST. Wykorzytany zbiór ma format .csv i zawiera 60000 rekordów, gdzie każdy rekord odpowiada za jeden obrazek 28x28 pikseli w skali szarości. Pierwsza wartość w rekordzie jest cyfrą która widnieje na obrazku, a kolejne to wartości pikseli obrazka. 
+\paragraph{}Wykorzystany został zbiór obrazów ręcznie pisanych cyfr MNIST. Zbiór danych ma format .csv i zawiera 60000 rekordów, gdzie każdy rekord odpowiada za jeden obrazek 28x28 pikseli w skali szarości. Pierwsza wartość w rekordzie jest cyfrą która widnieje na obrazku, a kolejne to wartości pikseli obrazka. 
 \paragraph{}
 Dla zadań postawionych w laboratorium zbiór danych jest dość duży, więc został on obcięty do pierwszych 6000 rekordów, z czego 4500 przeznaczono do trenowania, a pozostałe 1500 do testowania.
 \newpage    
@@ -52,42 +52,52 @@ Dla zadań postawionych w laboratorium zbiór danych jest dość duży, więc zo
 \subsubsection{Implementacja} 
 \paragraph{}W C++ normalizacja została samodzielnie zgodnie z podanym powyżej wzorem. W pętli przechodzącej tablicy (po kolumnach) wyszukiwane są wartości minimum i maxium dla każdej kolumny a następnie wyliczana nowa wartość dla każdego z elementów tablicy. Zrównoleglenie pętli za pomocą dyrektyw:
 \begin{lstlisting}
-	# pragma omp parallel default(none) private(i, j, min, max)
-	 shared(data, rows, columns, nr_threads) num_threads(nr_threads)
-	# pragma omp for schedule(dynamic, nr_threads)\end{lstlisting}
+	#pragma omp parallel default(none) private(i, j, min, max) 
+	shared(data, rows, columns, numberOfThreads)
+	num_threads(numberOfThreads)
+	#pragma omp for schedule(dynamic, numberOfThreads)\end{lstlisting}
 \paragraph{}W Pythonie użyta została funkcja MinMaxScaler z pakietu sklearn .
 \subsubsection{Porównanie wyników} 
 \paragraph{}
 \begin{tabular}{|c|c|}
 \hline Parametry&Czas [s] \\ 
-\hline C++ & 0.281 \\
-\hline C++ OpenMP 1 wątek& 0.275 \\
-\hline C++ OpenMP 2 wątki& 0.131 \\
-\hline C++ OpenMP 3 wątki& 0.102 \\
-\hline C++ OpenMP 4 wątki& 0.077 \\\hline
+\hline C++ & 0.101 \\
+\hline C++ OpenMP 1 wątek& 0.108 \\
+\hline C++ OpenMP 2 wątki& 0.084 \\
+\hline C++ OpenMP 3 wątki& 0.057 \\
+\hline C++ OpenMP 4 wątki& 0.048 \\
+\hline C++ OpenMP 5 wątki& 0.049 \\
+\hline C++ OpenMP 6 wątki& 0.048 \\
+\hline C++ OpenMP 7 wątki& 0.046 \\
+\hline C++ OpenMP 8 wątki& 0.048 \\
+\hline
 \hline Pyhon sklearn& 0.037 \\
 \hline
 \end{tabular}
 \paragraph{}
-Po zastosowaniu OpenMP i zwiększeniu ilości używanych wątków widać znaczącą poprawę czasu wykonania. Czas zmniejsza się proporcjonalnie wraz ze zwiększanie liczby wątków.\\
+Po zastosowaniu OpenMP i zwiększeniu ilości używanych wątków widać znaczącą poprawę czasu wykonania. Czas wykonania spada gdy liczba wątków <= 4 (ilość rdzeni procesora na którym wykonywane były obliczenia). Nie udało się uzyskać czasu mniejszego niż z użyciem sklearn.\\
 \begin{tikzpicture}[scale=1.5]
 \begin{axis}[
 title={Zależność czasu od ilości wątków - normalizacja},
 title style={text width=16em},
 xlabel={Ilość wątków},
 ylabel={Czas [s]},
-xmin=0,xmax=5,
-ymin=0.04,ymax=0.3,
+xmin=0,xmax=9,
+ymin=0.03,ymax=0.13,
 legend pos=north east,
 ymajorgrids=true,grid style=dashed
 ]
 
 \addplot[color=red,mark=*]
 coordinates {
-(1,0.275)
-(2,0.231)
-(3,0.102)
-(4,0.077)
+(1,0.108)
+(2,0.084)
+(3,0.057)
+(4,0.048)
+(5,0.049)
+(6,0.048)
+(7,0.046)
+(8,0.048)
 };
 
 \legend{C++}
@@ -100,19 +110,22 @@ title={Zależność przyspieszenia od ilości wątków - normalizacja},
 title style={text width=16em},
 xlabel={Ilość wątków},
 ylabel={Czas [s]},
-xmin=0,xmax=5,
-ymin=0,ymax=0.3,
+xmin=0,xmax=9,
+ymin=-0.01,ymax=0.07,
 legend pos=north east,
 ymajorgrids=true,grid style=dashed
 ]
 
 \addplot[color=red,mark=*]
 coordinates {
-(1,0.006)
-(2,0.15)
-(3,0.179)
-(4,0.204)
-
+(1,-0.007)
+(2,0.017)
+(3,0.044)
+(4,0.053)
+(5,0.054)
+(6,0.053)
+(7,0.055)
+(8,0.053)
 };
 
 \legend{C++}
@@ -124,11 +137,12 @@ coordinates {
 \paragraph{} Wzór:
 \paragraph{}$x^*=\frac{x-\mu}{\sigma}$
 \subsubsection{Implementacja} 
-\paragraph{}W C++ standaryzacja została samodzielnie zgodnie z podanym powyżej wzorem. Przechodzimy w pętli po kolumnach i dla każdej kolumny szukamy wartości średniej i wariancji, a następnie wyliczamy nowe wartości dla każdego elementu tablicy. Zrównoleglenie pętli za pomocą dyrektyw:
+\paragraph{}W C++ standaryzacja została zaimplementowana samodzielnie zgodnie z podanym powyżej wzorem. Przechodzimy w pętli po kolumnach i dla każdej kolumny szukamy wartości średniej i wariancji, a następnie wyliczamy nowe wartości dla każdego elementu tablicy. Zrównoleglenie pętli za pomocą dyrektyw:
 \begin{lstlisting}
-	#pragma omp parallel default(none) private(i, j, amo, var, ave)
-	shared(data, rows, columns, nr_threads) num_threads(nr_threads)
-	#pragma omp for schedule(dynamic, nr_threads)
+   #pragma omp parallel default(none) private(i, j, ave, amo, var) 
+   shared(data, rows, columns, numberOfThreads)
+   num_threads(numberOfThreads)
+   #pragma omp for schedule(dynamic, numberOfThreads)
 \end{lstlisting}
 
 \paragraph{}W Pythonie użyta została funkcja StandardScaler z pakietu sklearn.
@@ -138,16 +152,21 @@ coordinates {
 \paragraph{}
 \begin{tabular}{|c|c|}
 \hline Parametry&Czas [s] \\
-\hline C++ & 0,774s \\
-\hline C++ OpenMP 1 wątek& 0.813 \\
-\hline C++ OpenMP 2 wątki& 0.408 \\
-\hline C++ OpenMP 3 wątki& 0.286 \\
-\hline C++ OpenMP 4 wątki& 0.225 \\\hline
+\hline C++ & 0.157 \\
+\hline C++ OpenMP 1 wątek& 0.162 \\
+\hline C++ OpenMP 2 wątki& 0.117 \\
+\hline C++ OpenMP 3 wątki& 0.079 \\
+\hline C++ OpenMP 4 wątki& 0.067 \\
+\hline C++ OpenMP 5 wątki& 0.069 \\
+\hline C++ OpenMP 6 wątki& 0.066 \\
+\hline C++ OpenMP 7 wątki& 0.067 \\
+\hline C++ OpenMP 8 wątki& 0.066 \\
+\hline
 \hline Pyhon sklearn& 0.086 \\
 \hline
 \end{tabular}
 \paragraph{}
-Zrównoleglenie w C++ przyniosło pozytywne sutki. Czas wykonania spadł dwukrotnie przy użyciu dwóch wątków i prawie czterokrotnie przy użyciu czterech.
+Zrównoleglenie w C++ przyniosło pozytywne skutki. Czas wykonania spadł o 59\% przy użyciu czterech wątków w stosunku do czasu działania algorytmu na jednym wątku. Już wykorzystanie trzech wątków dało czas mniejszy niż  implementacja z sklearn.
 
 \begin{tikzpicture}[scale=1.5]
 \begin{axis}[
@@ -155,18 +174,21 @@ title={Zależność czasu od ilości wątków - standaryzacja},
 title style={text width=16em},
 xlabel={Ilość wątków},
 ylabel={Czas [s]},
-xmin=0,xmax=5,
-ymin=0.1,ymax=0.84,
+xmin=0,xmax=9,
+ymin=0.05,ymax=0.19,
 legend pos=north east,
 ymajorgrids=true,grid style=dashed
 ]
-
 \addplot[color=red,mark=*]
 coordinates {
-(1,0.813)
-(2,0.408)
-(3,0.286)
-(4,0.225)
+(1,0.162)
+(2,0.117)
+(3,0.079)
+(4,0.067)
+(5,0.069)
+(6,0.066)
+(7,0.067)
+(8,0.066)
 };
 
 \legend{C++}
@@ -179,18 +201,22 @@ title={Zależność przyspieszenia od ilości wątków - standaryzacja},
 title style={text width=16em},
 xlabel={Ilość wątków},
 ylabel={Czas [s]},
-xmin=0,xmax=5,
-ymin=-0.1,ymax=0.75,
+xmin=0,xmax=8,
+ymin=-0.01,ymax=0.12,
 legend pos=north east,
 ymajorgrids=true,grid style=dashed
 ]
 
 \addplot[color=red,mark=*]
 coordinates {
-(1,-0.039)
-(2,0.366)
-(3,0.488)
-(4,0.549)
+(1,-0.005)
+(2,0.04)
+(3,0.078)
+(4,0.09)
+(5,0.088)
+(6,0.091)
+(7,0.09)
+(8,0.091)
 };
 
 \legend{C++}
@@ -199,11 +225,13 @@ coordinates {
 \newpage
 \subsection{Klasyfikacja KNN} 
 \subsubsection{Implementacja} 
-\paragraph{}W C++ algorytm k najbliższych sąsiadów zaimplementowany samodzielnie. Algorytm uwzględnia tylko najbliższego sąsiada i korzysta z metryki euklidesowej.  Zrównoleglenie za pomocą dyrektyw:
+\paragraph{}W C++ algorytm k najbliższych sąsiadów zaimplementowany samodzielnie. Algorytm uwzględnia tylko najbliższego sąsiada i korzysta z metryki euklidesowej. Zrównoleglenie za pomocą dyrektyw:
 \begin{lstlisting}
-	#pragma omp parallel default(none) private(i, j, metric, amount, searchRow) 
-	shared(trainData, dataTrainRows, columns, nr_threads) num_threads(nr_threads)
-	#pragma omp for schedule(dynamic, nr_threads)
+    #pragma omp parallel default(none) private(current_test_row, 
+    closest_neighbour_distance, closest_neighbour_index) 
+    shared(max_float, numberOfThreads)
+    num_threads(numberOfThreads) reduction(+ : accurate_predictions)
+    #pragma omp for schedule(dynamic, numberOfThreads)
 \end{lstlisting}
 
 \paragraph{}W Pythonie użyta została funkcja KNeighborsClassifier z pakietu sklearn z parametrami:
@@ -212,31 +240,42 @@ KNeighborsClassifier(n_neighbors=1, algorithm='brute', p=2, metric='minkowski',
 n_jobs=app_conf['jobs_number'])
 \end{lstlisting}
 Czasy były mierzone dla wartości njobs od 1 do 4. \\
-Dokładność accuracy wyniosła 71\% dla danych po standard scalerze oraz 66\% dla danych po min-max scalarze. Dla c++ w przypadku normalizacji min-max otrzymano dokładność. 
-W przypadku normalizacji w c++ otrzymano dokładność 75\%. Inaczej okazało się w przypadku standaryzacji, gdzie otrzymywano bardzo niskie wartości dokładności. Prawdopodobnie spowodowane błędem w implementacji algorytmu.
+Dokładność accuracy wyniosła 71\% dla danych po standard scalerze oraz 66\% dla danych po min-max scalarze.  
+W przypadku normalizacji w c++ otrzymano dokładność 93.67\%. W przypadku standaryzacji dokładność wyniosła 90%.
+Można wysnuć wniosek, że algorytm w pakiecie sklearn działa w nieco inny sposób stąd mniejszy czas wykonania, ale i mniejsza dokładność. Użycie równoległości oczywiście nie miało wpływu na dokładność działania Knn.
 \subsubsection{Porównanie wyników} 
 \paragraph{}
 \begin{tabular}{|c|c|}
 \hline Parametry&Czas [s] \\ 
-\hline C++ OpenMP 1 wątek min-max& 374 \\
-\hline C++ OpenMP 2 wątki min-max& 368 \\
-\hline C++ OpenMP 3 wątki min-max& 368  \\
-\hline C++ OpenMP 4 wątki min-max& 370 \\\hline
-\hline Pyhon sklearn 1 wątek min-max& 0.215 \\
-\hline Pyhon sklearn 2 wątki min-max& 0.323 \\
-\hline Pyhon sklearn 3 wątki min-max& 0.455 \\
-\hline Pyhon sklearn 4 wątki min-max& 0.386 \\\hline
-\hline C++ OpenMP 1 wątek standard-scaler& 382 \\
-\hline C++ OpenMP 2 wątki standard-scaler& 380 \\ 
-\hline C++ OpenMP 3 wątki standard-scaler&   384 \\ 
-\hline C++ OpenMP 4 wątki standard-scaler& 386 \\\hline
-\hline Pyhon sklearn 1 wątek standard-scaler& 0.208 \\
-\hline Pyhon sklearn 2 wątki standard-scaler& 0.326 \\
-\hline Pyhon sklearn 3 wątki standard-scaler& 0.329 \\
-\hline Pyhon sklearn 4 wątki standard-scaler& 0.328 \\\hline
+\hline C++ OpenMP 1 wątek normalizacja& 17.750 \\
+\hline C++ OpenMP 2 wątki normalizacja& 9.381 \\
+\hline C++ OpenMP 3 wątki normalizacja& 6.454  \\
+\hline C++ OpenMP 4 wątki normalizacja& 6.061 \\
+\hline C++ OpenMP 5 wątek normalizacja& 5.993 \\
+\hline C++ OpenMP 6 wątki normalizacja& 6.012 \\
+\hline C++ OpenMP 7 wątki normalizacja& 6.071  \\
+\hline C++ OpenMP 8 wątki normalizacja& 6.075 \\\hline
+\hline Pyhon sklearn njobs=1 normalizacja& 0.215 \\
+\hline Pyhon sklearn njobs=2 normalizacja& 0.323 \\
+\hline Pyhon sklearn njobs=3 normalizacja& 0.455 \\
+\hline Pyhon sklearn njobs=4 normalizacja& 0.386 \\\hline
+\hline C++ OpenMP 1 wątek standaryzacja& 17.930 \\
+\hline C++ OpenMP 2 wątki standaryzacja& 9.462 \\ 
+\hline C++ OpenMP 3 wątki standaryzacja& 6.510 \\ 
+\hline C++ OpenMP 4 wątki standaryzacja& 6.035 \\
+\hline C++ OpenMP 5 wątek standaryzacja& 6.018 \\
+\hline C++ OpenMP 6 wątki standaryzacja& 6.067 \\ 
+\hline C++ OpenMP 7 wątki standaryzacja& 6.068 \\ 
+\hline C++ OpenMP 8 wątki standaryzacja& 6.039 \\
+\hline
+\hline Pyhon sklearn 1 wątek standaryzacja& 0.208 \\
+\hline Pyhon sklearn 2 wątki standaryzacja& 0.326 \\
+\hline Pyhon sklearn 3 wątki standaryzacja& 0.329 \\
+\hline Pyhon sklearn 4 wątki standaryzacja& 0.328 \\\hline
 \end{tabular}
 \paragraph{}
-Zrównoleglenie nie dało żadnych pozytywnych skutków. W przypadku c++ czas wykonania był bardzo duży i nie zmieniał i pozostawał stały przy próbach zrównoleglania i zwiększania ilości wątków. W przypadku Python zwiększanie parametru njobs algorytmu KNN przynosiło odwrotny skutek do oczekiwanego - czas wykonania wydłużał się.
+Zrównoleglenie w c++ przyniosło pozytywny skutek. Wyniki były niemal identyczne dla danych po normalizacji jak i standaryzacji. Już przy użyciu dwóch wątków czas zmniejszył się ponad dwukrotnie. Wykorzystanie większej ilości wątków niż 4 (liczba rdzeni procesora na którym wykonywały się obliczenia) nie przynosiła już żadnych zmian w szybkości działania. Zależność między ilością wątków a czasem wykonania ma charakter wykładniczy.
+W przypadku Python zwiększanie parametru njobs algorytmu KNN przynosiło odwrotny skutek do oczekiwanego - czas wykonania wydłużał się.
 \paragraph{}
 \begin{tikzpicture}[scale=1.5]
 \begin{axis}[
@@ -244,38 +283,46 @@ title={Zależność czasu od ilości wątków - knn},
 title style={text width=16em},
 xlabel={Ilość wątków},
 ylabel={Czas [s]},
-xmin=0,xmax=5,
-ymin=350,ymax=400,
+xmin=0,xmax=9,
+ymin=6,ymax=19,
 legend pos=north east,
 ymajorgrids=true,grid style=dashed
 ]
 
 \addplot[color=red,mark=*]
 coordinates {
-(1,374)
-(2,368)
-(3,368)
-(4,370)
+(1,17.750)
+(2,9.381)
+(3,6.454)
+(4,6.061)
+(5,5.993)
+(6,6.012)
+(7,6.071)
+(8,6.075)
 };
 
 \addplot[color=green,mark=o]
 coordinates {
-(1,382)
-(2,380)
-(3,384)
-(4,386)
+(1,17.930)
+(2,9.462)
+(3,6.510)
+(4,6.035)
+(5,6.018)
+(6,6.067)
+(7,6.068)
+(8,6.039)
 };
 
-\legend{C++ min-max, C++ standard scaler}
+\legend{C++ normalizacja, C++ standardyzacja}
 \end{axis}
 \end{tikzpicture}
 
 \paragraph{}
 \begin{tikzpicture}[scale=1.5]
 \begin{axis}[
-title={Zależność czasu od ilości wątków - knn},
+title={Zależność czasu od parametru njobs - knn},
 title style={text width=16em},
-xlabel={Ilość wątków},
+xlabel={njobs},
 ylabel={Czas [s]},
 xmin=0,xmax=5,
 ymin=0.15,ymax=0.56,

@@ -35,8 +35,8 @@
 \contentsline {subsubsection}{\numberline {2.3.1}Implementacja}{9}% 
 \contentsline {paragraph}{}{9}% 
 \contentsline {paragraph}{}{9}% 
-\contentsline {subsubsection}{\numberline {2.3.2}Porównanie wyników}{9}% 
-\contentsline {paragraph}{}{9}% 
-\contentsline {paragraph}{}{9}% 
+\contentsline {subsubsection}{\numberline {2.3.2}Porównanie wyników}{10}% 
+\contentsline {paragraph}{}{10}% 
 \contentsline {paragraph}{}{10}% 
 \contentsline {paragraph}{}{11}% 
+\contentsline {paragraph}{}{12}% 

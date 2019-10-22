@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2019.10.12)  15 OCT 2019 04:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2019.10.12)  22 OCT 2019 09:49
 entering extended mode
 **./sprawozdanie1.tex
 (sprawozdanie1.tex
@@ -724,65 +724,40 @@ File: omslmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10.95> not available
 (Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 39.
- [2]
-Overfull \hbox (17.79971pt too wide) in paragraph at lines 56--57
-[][][][][][][][][][][][][][][][][][][][][] 
- []
-
-[3] [4] [5]
-Overfull \hbox (11.22966pt too wide) in paragraph at lines 129--130
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (11.22966pt too wide) in paragraph at lines 130--131
-[][][][][][][][][][][][][][][][][][][][][] 
- []
-
-[6] [7] [8]
-Overfull \hbox (5.46443pt too wide) in paragraph at lines 202--203
+ [2] [3] [4] [5] [6] [7] [8]
+Overfull \hbox (5.46443pt too wide) in paragraph at lines 228--229
  [] \T1/lmr/m/n/10.95 W C++ al-go-rytm k naj-bli»-szych s¡-sia-dów za-im-ple-me
 n-to-wany sa-mo-dziel-nie. Al-go-rytm uwzgl¦d-
  []
 
 
-Overfull \hbox (90.0703pt too wide) in paragraph at lines 204--205
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (103.2104pt too wide) in paragraph at lines 205--206
-[][][][][][][][][][][][][][][][][][][][][] 
- []
-
-
-Overfull \hbox (63.79008pt too wide) in paragraph at lines 211--212
+Overfull \hbox (63.79008pt too wide) in paragraph at lines 239--240
 [][][][][][][][][][][][][][][][][][][] 
  []
 
-[9] [10] [11] (sprawozdanie1.aux) ) 
+[9] [10] [11] [12] (sprawozdanie1.aux) ) 
 Here is how much of TeX's memory you used:
- 25124 strings out of 492452
- 622321 string characters out of 3134012
- 802735 words of memory out of 3000000
- 29060 multiletter control sequences out of 15000+200000
+ 25128 strings out of 492452
+ 622401 string characters out of 3134012
+ 798736 words of memory out of 3000000
+ 29064 multiletter control sequences out of 15000+200000
  47593 words of font info for 38 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  68i,18n,98p,735b,2180s stack positions out of 5000i,500n,10000p,200000b,50000s
-{D:/PROGRAMY/miktex/fonts/enc/dvips/lm/lm-rm
-.enc}{D:/PROGRAMY/miktex/fonts/enc/dvips/lm/lm-mathit.enc}{D:/PROGRAMY/miktex/f
-onts/enc/dvips/lm/lm-mathsy.enc}{D:/PROGRAMY/miktex/fonts/enc/dvips/lm/lm-ec.en
-c}<D:/PROGRAMY/miktex/fonts/type1/public/lm/lmbx10.pfb><D:/PROGRAMY/miktex/font
-s/type1/public/lm/lmbx12.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmmi10.p
-fb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmmi8.pfb><D:/PROGRAMY/miktex/font
-s/type1/public/lm/lmr10.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmr12.pfb
-><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmr17.pfb><D:/PROGRAMY/miktex/fonts/
-type1/public/lm/lmr8.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmri12.pfb><
-D:/PROGRAMY/miktex/fonts/type1/public/lm/lmsy10.pfb><D:/PROGRAMY/miktex/fonts/t
-ype1/public/lm/lmsy8.pfb>
-Output written on sprawozdanie1.pdf (12 pages, 219773 bytes).
+{D:/PROGRAMY/miktex/fonts/enc/dvips/lm/
+lm-rm.enc}{D:/PROGRAMY/miktex/fonts/enc/dvips/lm/lm-mathit.enc}{D:/PROGRAMY/mik
+tex/fonts/enc/dvips/lm/lm-mathsy.enc}{D:/PROGRAMY/miktex/fonts/enc/dvips/lm/lm-
+ec.enc}<D:/PROGRAMY/miktex/fonts/type1/public/lm/lmbx10.pfb><D:/PROGRAMY/miktex
+/fonts/type1/public/lm/lmbx12.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmm
+i10.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmmi8.pfb><D:/PROGRAMY/miktex
+/fonts/type1/public/lm/lmr10.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmr1
+2.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmr17.pfb><D:/PROGRAMY/miktex/f
+onts/type1/public/lm/lmr8.pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmri12.
+pfb><D:/PROGRAMY/miktex/fonts/type1/public/lm/lmsy10.pfb><D:/PROGRAMY/miktex/fo
+nts/type1/public/lm/lmsy8.pfb>
+Output written on sprawozdanie1.pdf (13 pages, 223964 bytes).
 PDF statistics:
- 94 PDF objects out of 1000 (max. 8388607)
+ 98 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
